@@ -4,10 +4,12 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Account: typeof import('./src/components/Modal/Account.vue')['default']
     BaseBaseButton: typeof import('./src/components/base/BaseButton.vue')['default']
     BaseBaseLoadingIcon: typeof import('./src/components/base/BaseLoadingIcon.vue')['default']
     BaseButton: typeof import('./src/components/base/BaseButton.vue')['default']
     BaseLoadingIcon: typeof import('./src/components/base/BaseLoadingIcon.vue')['default']
+    Modal: typeof import('./src/components/base/Modal.vue')['default']
   }
 }
 
