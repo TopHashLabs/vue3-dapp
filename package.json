@@ -7,9 +7,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/address": "^5.5.0",
+    "@ethersproject/bignumber": "^5.5.0",
+    "@ethersproject/bytes": "^5.5.0",
+    "@ethersproject/providers": "^5.5.3",
+    "@ethersproject/solidity": "^5.5.0",
+    "@ethersproject/strings": "^5.5.0",
+    "@ethersproject/units": "^5.5.0",
+    "@ethersproject/wallet": "^5.5.0",
+    "@snapshot-labs/lock": "^0.1.4",
     "vue": "^3.2.25"
   },
   "devDependencies": {
+    "@types/node": "^17.0.17",
     "@vitejs/plugin-vue": "^2.0.0",
     "autoprefixer": "^10.4.2",
     "postcss": "^8.4.5",
