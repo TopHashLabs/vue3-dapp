@@ -3,7 +3,7 @@ import { ref, provide } from 'vue'
 import { useWeb3 } from '@/composables/useWeb3'
 import { shorten } from './helpers/utils'
 
-const { login, web3 } = useWeb3()
+const { login, web3, switchNetwork, isRightChain } = useWeb3()
 
 provide('web3', web3)
 
@@ -20,6 +20,9 @@ async function handleLogin() {
   <div class="container">
     <BaseButton @click="handleLogin" :loading="loading"
       >Connect Wallet</BaseButton
+    >
+    <BaseButton v-if="!isRightChain" @click="switchNetwork" :loading="loading"
+      >Switch Network</BaseButton
     >
     <div>
       <h1>

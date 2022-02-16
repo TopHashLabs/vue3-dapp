@@ -5,8 +5,8 @@ import networks from '@/helpers/networks.json'
 import { formatUnits } from '@ethersproject/units'
 
 let auth
-const defaultNetwork: any =
-  import.meta.env.VITE_DEFAULT_NETWORK || Object.keys(networks)[0]
+const defaultNetwork = Object.keys(networks)[0]
+const defaultChainId = 1
 
 const state = reactive({
   account: '',
@@ -14,7 +14,8 @@ const state = reactive({
   authLoading: false,
   profile: null,
   walletConnectType: null,
-  isTrezor: false
+  isTrezor: false,
+  isRightChain: true,
 })
 
 export function useWeb3() {
@@ -66,7 +67,7 @@ export function useWeb3() {
           network = { chainId: safeChainId }
           accounts = [safeAddress]
         } else {
-          ;[network, accounts] = await Promise.all([
+          [network, accounts] = await Promise.all([
             auth.web3.getNetwork(),
             auth.web3.listAccounts()
           ])
@@ -88,7 +89,7 @@ export function useWeb3() {
     }
   }
 
-  function handleChainChanged(chainId) {
+  function handleChainChanged(chainId: number) {
     if (!networks[chainId]) {
       networks[chainId] = {
         ...networks[defaultNetwork],
@@ -99,6 +100,22 @@ export function useWeb3() {
       }
     }
     state.network = networks[chainId]
+    console.log(chainId)
+    state.isRightChain = chainId === defaultChainId ? true : false
+  }
+
+  async function switchNetwork() {
+    if (window.ethereum) {
+      let hexString = Number(defaultNetwork).toString(16)
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x' + hexString }],
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
   }
 
   return {
@@ -106,7 +123,9 @@ export function useWeb3() {
     logout,
     loadProvider,
     handleChainChanged,
+    switchNetwork,
     web3: computed(() => state),
-    web3Account: computed(() => state.account)
+    web3Account: computed(() => state.account),
+    isRightChain: computed(() => state.isRightChain)
   }
 }
