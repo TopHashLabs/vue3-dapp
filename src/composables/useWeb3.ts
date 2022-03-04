@@ -3,9 +3,11 @@ import { Web3Provider } from '@ethersproject/providers'
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3'
 import networks from '@/helpers/networks.json'
 import { formatUnits } from '@ethersproject/units'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 
 let auth
 const defaultNetwork = Object.keys(networks)[0]
+const { setStorageItem, getStorageItem } = useLocalStorage()
 const defaultChainId = 1
 
 const state = reactive({
@@ -16,6 +18,8 @@ const state = reactive({
   walletConnectType: null,
   isTrezor: false,
   isRightChain: true,
+  isConnected: getStorageItem('isConnected') ?? false
+
 })
 
 export function useWeb3() {
@@ -37,6 +41,8 @@ export function useWeb3() {
     state.account = ''
     state.profile = null
     state.isTrezor = false
+    setStorageItem('isConnected', false)
+    state.isConnected = false
   }
 
   async function loadProvider() {
@@ -54,9 +60,10 @@ export function useWeb3() {
           if (accounts.length !== 0) {
             state.account = accounts[0]
             await login()
+          } else {
+            await logout()
           }
         })
-        // auth.provider.on('disconnect', async () => {});
       }
       console.log('Provider', auth.provider.value)
       let network, accounts
@@ -82,6 +89,8 @@ export function useWeb3() {
 
       state.account = acc
       state.walletConnectType = auth.provider.value?.wc?.peerMeta?.name || null
+      setStorageItem('isConnected', true)
+      state.isConnected = true
     } catch (e) {
       state.account = ''
       state.profile = null
@@ -126,6 +135,7 @@ export function useWeb3() {
     switchNetwork,
     web3: computed(() => state),
     web3Account: computed(() => state.account),
-    isRightChain: computed(() => state.isRightChain)
+    isRightChain: computed(() => state.isRightChain),
+    isConnected: computed(() => state.isConnected)
   }
 }
